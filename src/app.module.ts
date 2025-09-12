@@ -1,10 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { User } from './users/entities/user.entity';
+import { UsersModule } from './user/modules/users/users.module';
+import { User } from './user/modules/users/entities/user.entity';
+import { AuthModule } from './user/modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -18,6 +21,7 @@ import { User } from './users/entities/user.entity';
     }),
     TypeOrmModule.forFeature([User]),
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
