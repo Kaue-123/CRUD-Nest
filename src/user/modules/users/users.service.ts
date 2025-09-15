@@ -37,4 +37,12 @@ export class UsersService {
   async remove(id: number): Promise<void> {
     await this.userRepository.delete(id);
   }
+
+  async updatePassword(id: number, newPassword: string): Promise<User | null> {
+    if (newPassword) {
+      newPassword = await bcrypt.hash(newPassword, 10);
+    }
+    await this.userRepository.update(id, { password: newPassword });
+    return this.userRepository.findOneBy({ id });
+  }
 }
