@@ -4,6 +4,7 @@ import {
   MinLength,
   MaxLength,
   IsOptional,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -12,9 +13,11 @@ export class CreateUserDto {
   @MaxLength(50, { message: 'O nome deve ter no máximo 50 caracteres.' })
   name: string;
 
+  @IsNotEmpty({ message: 'E-mail obrigatório.' })
   @IsEmail({}, { message: 'E-mail inválido.' })
   email: string;
 
+  @IsNotEmpty({ message: 'Senha obrigatória.' })
   @IsString({ message: 'A senha deve ser uma string.' })
   @MinLength(6, { message: 'A senha deve ter pelo menos 6 caracteres.' })
   password: string;
