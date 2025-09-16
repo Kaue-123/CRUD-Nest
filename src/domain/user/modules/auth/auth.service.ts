@@ -10,7 +10,10 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(name: string, password: string): Promise<{ access_token: string }> {
+  async signIn(
+    name: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
     const user = await this.usersService.findByName(name);
     if (!user) {
       throw new Error('Usuário ou senha inválidos');
