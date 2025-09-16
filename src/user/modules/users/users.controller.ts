@@ -16,13 +16,11 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.usersService.findAll();
@@ -37,13 +35,13 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.usersService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return this.usersService.remove(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -52,9 +50,6 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserPasswordDto: UpdateUserPasswordDto,
   ) {
-    return this.usersService.updatePassword(
-      +id,
-      updateUserPasswordDto.password,
-    );
+    return this.usersService.updatePassword(id, updateUserPasswordDto.password);
   }
 }
