@@ -8,10 +8,12 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import type { AuthenticatedRequest } from 'src/common/interfaces/authenticated-request.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserPasswordDto } from './dto/update-password-dto';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { Request } from '@nestjs/common';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -49,7 +51,14 @@ export class UsersController {
   updatePassword(
     @Param('id') id: string,
     @Body() updateUserPasswordDto: UpdateUserPasswordDto,
+    @Request() req: AuthenticatedRequest,
   ) {
+    const userPayload = req.user;
+    if (!userPayload || userPayload['sub'] !== id) {
+      return {
+        error: 'Acesso negado.',
+      };
+    }
     return this.usersService.updatePassword(id, updateUserPasswordDto.password);
   }
 }
