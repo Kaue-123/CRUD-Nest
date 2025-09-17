@@ -16,11 +16,11 @@ export class AuthService {
   ): Promise<{ access_token: string }> {
     const user = await this.usersService.findByName(name);
     if (!user) {
-      throw new Error('Usuário ou senha inválidos');
+      throw new Error('Usuário inválido');
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Usuário ou senha inválidos');
+      throw new Error('Senha inválida');
     }
     const payload = { sub: user.id, name: user.name };
     const access_token = await this.jwtService.signAsync(payload);
