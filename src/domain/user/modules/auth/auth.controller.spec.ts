@@ -4,7 +4,9 @@ import { AuthService } from './auth.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
-  const mockAuthService = {};
+  const mockAuthService = {
+    signIn: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -16,5 +18,20 @@ describe('AuthController', () => {
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
+  });
+
+  it('should return a token on successful login', async () => {
+    mockAuthService.signIn = jest
+      .fn()
+      .mockResolvedValue({ access_token: 'token' });
+
+    const sigInDto = { name: 'ana', password: 'testeNovaSenha' };
+    const result = await controller.login(sigInDto);
+
+    expect(result).toEqual({ token: 'token' });
+    expect(mockAuthService.signIn).toHaveBeenCalledWith(
+      'ana',
+      'testeNovaSenha',
+    );
   });
 });

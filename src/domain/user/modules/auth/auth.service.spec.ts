@@ -34,18 +34,12 @@ describe('AuthService', () => {
     service = module.get<AuthService>(AuthService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   it('should be signed in', async () => {
     jest
       .spyOn(bcrypt, 'compare')
       .mockImplementation(() => Promise.resolve(true));
-    console.log('Mocked bcrypt.compare to always return true');
 
     const result = await service.signIn('ana', 'testeNovaSenha');
-    console.log('Result of signIn:', result);
 
     expect(result).toEqual({ access_token: 'token' });
   });
