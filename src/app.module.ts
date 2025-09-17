@@ -4,6 +4,7 @@ import { UsersModule } from './domain/user/modules/users/users.module';
 import { User } from './domain/user/modules/users/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './domain/user/modules/auth/auth.module';
+import { SendEmailModule } from './infra/send-email/send-email.module';
 
 @Module({
   imports: [
@@ -11,7 +12,7 @@ import { AuthModule } from './domain/user/modules/auth/auth.module';
     TypeOrmModule.forRoot({
       type: process.env.DB_TYPE as 'mysql',
       host: process.env.DB_HOST,
-      port: 3306,
+      port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -22,6 +23,7 @@ import { AuthModule } from './domain/user/modules/auth/auth.module';
     TypeOrmModule.forFeature([User]),
     UsersModule,
     AuthModule,
+    SendEmailModule,
   ],
   controllers: [],
   providers: [],
