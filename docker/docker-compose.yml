@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  mysql_nest:
+    image: mysql:8.0
+    container_name: mysql_db_nest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '3308:3306'
+    volumes:
+      - mysql_data_nest:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # # api:
+  #   build:
+  #     context: ..
+  #     dockerfile: Dockerfile
+  #   container_name: envoy_api
+  #   restart: always
+  #   ports:
+  #     - "3000:3000" # Porta da API
+  #   depends_on:
+  #     - mysql
+  #   environment:
+  #     DB_HOST: mysql
+  #     DB_PORT: 3306
+  #     DB_USER: ${DB_USER}
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #     DB_NAME: ${DB_NAME}
+  #   volumes:
+  #     - ../.env:/app/.env # Garante que o .env seja copiado para o container
+volumes:
+  mysql_data_nest:
