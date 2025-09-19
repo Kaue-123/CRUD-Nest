@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/domain/user/modules/users/entities/user.entity';
-// ...existing code...
 
 @Injectable()
 export class UsersRepository {
