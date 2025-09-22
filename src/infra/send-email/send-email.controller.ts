@@ -5,15 +5,18 @@ import {
   HttpStatus,
   InternalServerErrorException,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { BodyEmailDto } from 'src/infra/send-email/dto/body-email.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('send-email')
 export class SendEmailController {
   constructor(@InjectQueue('email') private readonly emailQueue: Queue) {}
 
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post()
   async sendEmail(@Body() dto: BodyEmailDto): Promise<any> {
