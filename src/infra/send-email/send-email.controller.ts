@@ -11,7 +11,10 @@ import { BodyEmailDto } from 'src/infra/send-email/dto/body-email.dto';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { SendEmailDocs } from './decorators/email-decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('send-email')
 export class SendEmailController {
   constructor(@InjectQueue('email') private readonly emailQueue: Queue) {}
@@ -19,6 +22,7 @@ export class SendEmailController {
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post()
+  @SendEmailDocs()
   async sendEmail(@Body() dto: BodyEmailDto): Promise<any> {
     try {
       await this.emailQueue.add('send-email', dto);
