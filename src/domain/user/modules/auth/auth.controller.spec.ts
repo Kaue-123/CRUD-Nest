@@ -11,7 +11,17 @@ describe('AuthController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
-      providers: [{ provide: AuthService, useValue: mockAuthService }],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        {
+          provide: 'PROM_METRIC_AUTH_SUCCESSFUL_LOGINS_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_AUTH_FAILED_LOGINS_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+      ],
     }).compile();
     controller = module.get<AuthController>(AuthController);
   });

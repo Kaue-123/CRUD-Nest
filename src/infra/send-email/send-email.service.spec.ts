@@ -6,7 +6,13 @@ describe('SendEmailService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SendEmailService],
+      providers: [
+        SendEmailService,
+        {
+          provide: 'PROM_METRIC_EMAILS_SENT_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+      ],
     }).compile();
 
     service = module.get<SendEmailService>(SendEmailService);

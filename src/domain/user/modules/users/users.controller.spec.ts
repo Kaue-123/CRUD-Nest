@@ -23,6 +23,18 @@ describe('UsersController', () => {
         { provide: UsersService, useValue: mockUsersService },
         { provide: UsersRepository, useValue: mockUsersRepository },
         { provide: JwtService, useValue: mockJwtService },
+        { provide: 'PROM_METRIC_USERS_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_USERS_CREATED_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_USERS_FETCHED_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_USERS_DELETED_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_USERS_UPDATED_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_USERS_PASSWORD_UPDATED_TOTAL', useValue: {} },
+        { provide: 'PROM_METRIC_CREATE_USER_REQUESTS_TOTAL', useValue: {} },
+        {
+          provide: 'PROM_METRIC_UPDATE_USER_PASSWORD_REQUESTS_TOTAL',
+          useValue: {},
+        },
+        { provide: 'PROM_METRIC_DELETE_USER_REQUESTS_TOTAL', useValue: {} },
       ],
     }).compile();
     controller = module.get<UsersController>(UsersController);
@@ -45,7 +57,7 @@ describe('UsersController', () => {
       email: 'novo@email.com',
       password: '123',
     };
-    mockUsersService.create.mockReturnValue({ id: '2', ...createUserDto });
+    mockUsersService.create.mockResolvedValue({ id: '2', ...createUserDto });
     const result = await controller.create(createUserDto);
     expect(result).toEqual({ id: '2', ...createUserDto });
     expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);

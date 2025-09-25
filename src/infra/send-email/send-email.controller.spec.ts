@@ -1,15 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SendEmailController } from './send-email.controller';
+import { JwtService } from '@nestjs/jwt';
+import { SendEmailService } from './send-email.service';
 
 describe('SendEmailController', () => {
   let controller: SendEmailController;
 
   let emailQueueMock: { add: jest.Mock };
+  let jwtServiceMock: Partial<JwtService>;
   beforeEach(async () => {
     emailQueueMock = { add: jest.fn() };
+    jwtServiceMock = {
+      verify: jest.fn().mockReturnValue({ userId: 1 }),
+    };
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [SendEmailController],
-      providers: [{ provide: 'BullQueue_email', useValue: emailQueueMock }],
+      controllers: [SendEmailController, SendEmailService],
+      providers: [
+        { provide: 'BullQueue_email', useValue: emailQueueMock },
+        { provide: JwtService, useValue: jwtServiceMock },
+        { provide: 'PROM_METRIC_EMAILS_SENT_TOTAL', useValue: {} },
+      ],
     }).compile();
 
     controller = module.get<SendEmailController>(SendEmailController);
