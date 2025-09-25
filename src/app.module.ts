@@ -5,6 +5,7 @@ import { User } from './domain/user/modules/users/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './domain/user/modules/auth/auth.module';
 import { SendEmailModule } from './infra/send-email/send-email.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SendEmailModule } from './infra/send-email/send-email.module';
       password: process.env.DB_DOCKER_PASSWORD,
       database: process.env.DB_DOCKER_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -24,6 +26,12 @@ import { SendEmailModule } from './infra/send-email/send-email.module';
     UsersModule,
     AuthModule,
     SendEmailModule,
+    PrometheusModule.register({
+      path: '/metrics/test',
+      defaultMetrics: {
+        enabled: false,
+      },
+    }),
   ],
   controllers: [],
   providers: [],

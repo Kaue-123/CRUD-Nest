@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   mysql_nest:
     image: mysql:8.0
@@ -12,29 +13,67 @@ services:
     ports:
       - '3308:3306'
     volumes:
-      - mysql_data_nest:/var/lib/mysql
+      - ${VOLUME_MYSQL}:/var/lib/mysql
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3100:3000"
+    depends_on:
+      - mysql_nest
+    volumes:
+      - ${VOLUME_GRAFANA}:/var/lib/grafana
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
-  # # api:
-  #   build:
-  #     context: ..
-  #     dockerfile: Dockerfile
-  #   container_name: envoy_api
-  #   restart: always
-  #   ports:
-  #     - "3000:3000" # Porta da API
-  #   depends_on:
-  #     - mysql
-  #   environment:
-  #     DB_HOST: mysql
-  #     DB_PORT: 3306
-  #     DB_USER: ${DB_USER}
-  #     DB_PASSWORD: ${DB_PASSWORD}
-  #     DB_NAME: ${DB_NAME}
-  #   volumes:
-  #     - ../.env:/app/.env # Garante que o .env seja copiado para o container
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ${VOLUME_PROMETHEUS}:/prometheus
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: envoy_api
+    restart: always
+    ports:
+      - "3000:3000"  #Porta da API
+    depends_on:
+      - mysql_nest
+      - redis
+    environment:
+      DB_DOCKER_HOST: mysql_nest
+      DB_DOCKER_PORT: 3306
+      DB_DOCKER_USERNAME: ${DB_USER}
+      DB_DOCKER_PASSWORD: ${DB_PASSWORD}
+      DB_DOCKER_NAME: ${DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - ../.env:/app/.env # Garante que o .env seja copiado para o container
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
 volumes:
   mysql_data_nest:
+  grafana_data:
+  prometheus_data:
