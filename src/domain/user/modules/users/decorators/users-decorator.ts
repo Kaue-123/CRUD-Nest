@@ -80,37 +80,6 @@ export function FindUserByIdDocs() {
   );
 }
 
-export function FindUserByNameDocs() {
-  return applyDecorators(
-    ApiOperation({
-      summary: 'Busca usuário por nome',
-      description: 'Retorna os dados de um usuário pelo seu nome.',
-    }),
-    ApiParam({
-      name: 'name',
-      type: 'string',
-      description: 'ID do usuário',
-      example: 'uuid-do-usuario',
-    }),
-    ApiResponse({
-      status: 200,
-      description: 'Usuário encontrado',
-      schema: {
-        type: 'object',
-        properties: {
-          id: { type: 'string', example: 'uuid-do-usuario' },
-          name: { type: 'string', example: 'kaue' },
-          email: { type: 'string', example: 'kaue@example.com' },
-        },
-      },
-    }),
-    ApiResponse({
-      status: 404,
-      description: 'Usuário não encontrado',
-    }),
-  );
-}
-
 export function UpdateUserPasswordDocs() {
   return applyDecorators(
     ApiOperation({
@@ -159,10 +128,39 @@ export function DeleteUserDocs() {
     ApiResponse({
       status: 200,
       description: 'Usuário removido com sucesso',
+      schema: {
+        type: 'object',
+        properties: {
+          status: { type: 'string', example: 'Usuário removido com sucesso' },
+        },
+      },
+    }),
+    ApiResponse({
+      status: 401,
+      description: 'Token inválido ou expirado',
+      schema: {
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number', example: 401 },
+          message: {
+            type: 'array',
+            items: { type: 'string', example: 'Token inválido ou expirado ' },
+          },
+          error: { type: 'string', example: 'Unathorized' },
+        },
+      },
     }),
     ApiResponse({
       status: 404,
       description: 'Usuário não encontrado',
+      schema: {
+        type: 'object',
+        properties: {
+          statusCode: { type: 'number', example: 404 },
+          message: { type: 'string', example: 'Usuário não encontrado' },
+          error: { type: 'string', example: 'Not Found' },
+        },
+      },
     }),
   );
 }
