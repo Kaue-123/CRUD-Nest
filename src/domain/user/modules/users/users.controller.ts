@@ -20,7 +20,6 @@ import {
   CreateUserDocs,
   DeleteUserDocs,
   FindUserByIdDocs,
-  FindUserByNameDocs,
   UpdateUserPasswordDocs,
 } from './decorators/users-decorator';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -44,19 +43,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @Get(':name')
-  @FindUserByNameDocs()
-  findByName(@Param('name') name: string) {
-    return this.usersService.findByName(name);
-  }
-
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
@@ -69,9 +55,18 @@ export class UsersController {
   @ApiBearerAuth()
   @Delete(':id')
   @DeleteUserDocs()
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     this.deleteUserCounter.inc();
-    return this.usersService.remove(id);
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      return {
+        statusCode: 404,
+        message: 'Usuário não encontrado',
+        error: 'Not Found',
+      };
+    }
+    await this.usersService.remove(id);
+    return { status: 'Usuário removido com sucesso' };
   }
 
   @UseGuards(JwtAuthGuard)
