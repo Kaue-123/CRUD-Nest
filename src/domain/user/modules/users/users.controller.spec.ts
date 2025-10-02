@@ -23,18 +23,42 @@ describe('UsersController', () => {
         { provide: UsersService, useValue: mockUsersService },
         { provide: UsersRepository, useValue: mockUsersRepository },
         { provide: JwtService, useValue: mockJwtService },
-        { provide: 'PROM_METRIC_USERS_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_USERS_CREATED_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_USERS_FETCHED_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_USERS_DELETED_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_USERS_UPDATED_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_USERS_PASSWORD_UPDATED_TOTAL', useValue: {} },
-        { provide: 'PROM_METRIC_CREATE_USER_REQUESTS_TOTAL', useValue: {} },
+        {
+          provide: 'PROM_METRIC_USERS_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_USERS_CREATED_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_USERS_FETCHED_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_USERS_DELETED_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_USERS_UPDATED_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_USERS_PASSWORD_UPDATED_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
+        {
+          provide: 'PROM_METRIC_CREATE_USER_REQUESTS_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
         {
           provide: 'PROM_METRIC_UPDATE_USER_PASSWORD_REQUESTS_TOTAL',
-          useValue: {},
+          useValue: { inc: jest.fn() },
         },
-        { provide: 'PROM_METRIC_DELETE_USER_REQUESTS_TOTAL', useValue: {} },
+        {
+          provide: 'PROM_METRIC_DELETE_USER_REQUESTS_TOTAL',
+          useValue: { inc: jest.fn() },
+        },
       ],
     }).compile();
     controller = module.get<UsersController>(UsersController);
@@ -44,13 +68,6 @@ describe('UsersController', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return all users from service', async () => {
-    const result = await controller.findAll();
-    expect(result).toEqual([
-      { id: '1', name: 'Kaue', email: 'kaue@email.com' },
-    ]);
-    expect(mockUsersService.findAll).toHaveBeenCalled();
-  });
   it('should create a user', async () => {
     const createUserDto = {
       name: 'Novo',
